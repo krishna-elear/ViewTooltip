@@ -161,7 +161,7 @@ public class ViewTooltip {
 
     public TooltipView show() {
         final Context activityContext = tooltip_view.getContext();
-        if (activityContext != null && activityContext instanceof Activity) {
+        if (activityContext instanceof Activity) {
             final ViewGroup decorView = rootView != null ?
                     (ViewGroup) rootView :
                     (ViewGroup) ((Activity) activityContext).getWindow().getDecorView();
@@ -176,12 +176,10 @@ public class ViewTooltip {
             int[] location = new int[2];
             view.getLocationOnScreen(location);
             rect.left = location[0];
-            if (rootGlobalOffset != null) {
-                rect.top -= rootGlobalOffset.y;
-                rect.bottom -= rootGlobalOffset.y;
-                rect.left -= rootGlobalOffset.x;
-                rect.right -= rootGlobalOffset.x;
-            }
+            rect.top -= rootGlobalOffset.y;
+            rect.bottom -= rootGlobalOffset.y;
+            rect.left -= rootGlobalOffset.x;
+            rect.right -= rootGlobalOffset.x;
 
             decorView.addView(tooltip_view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 

@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.FrameLayout;
@@ -160,6 +161,7 @@ public class ViewTooltip {
     }
 
     public TooltipView show() {
+        final ViewParent parent;
         final Context activityContext = tooltip_view.getContext();
         if (activityContext instanceof Activity) {
             final ViewGroup decorView = rootView != null ?
@@ -180,6 +182,10 @@ public class ViewTooltip {
             rect.bottom -= rootGlobalOffset.y;
             rect.left -= rootGlobalOffset.x;
             rect.right -= rootGlobalOffset.x;
+
+            if (null != (parent = tooltip_view.getParent())) {
+                ((ViewGroup) parent).removeView(tooltip_view);
+            }
 
             decorView.addView(tooltip_view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 

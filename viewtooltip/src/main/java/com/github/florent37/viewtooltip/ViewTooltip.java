@@ -161,7 +161,6 @@ public class ViewTooltip {
     }
 
     public TooltipView show() {
-        final ViewParent parent;
         final Context activityContext = tooltip_view.getContext();
         if (activityContext instanceof Activity) {
             final ViewGroup decorView = rootView != null ?
@@ -183,8 +182,8 @@ public class ViewTooltip {
             rect.left -= rootGlobalOffset.x;
             rect.right -= rootGlobalOffset.x;
 
-            if (null != (parent = tooltip_view.getParent())) {
-                ((ViewGroup) parent).removeView(tooltip_view);
+            if (!tooltip_view.readyToShow()) {
+                tooltip_view.removeNow();
             }
 
             decorView.addView(tooltip_view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -862,9 +861,13 @@ public class ViewTooltip {
             remove();
         }
 
+        public boolean readyToShow() {
+            return (null == getParent());
+        }
+
         public void removeNow() {
-            if (getParent() != null) {
-                final ViewGroup parent = ((ViewGroup) getParent());
+            final ViewGroup parent;
+            if (null != (parent = (ViewGroup) getParent())) {
                 parent.removeView(TooltipView.this);
             }
         }

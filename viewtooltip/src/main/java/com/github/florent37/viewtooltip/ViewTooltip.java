@@ -166,41 +166,36 @@ public class ViewTooltip {
                     (ViewGroup) rootView :
                     (ViewGroup) ((Activity) activityContext).getWindow().getDecorView();
 
-            view.postDelayed(new Runnable() {
+            final Rect rect = new Rect();
+            view.getGlobalVisibleRect(rect);
+
+            final Rect rootGlobalRect = new Rect();
+            final Point rootGlobalOffset = new Point();
+            decorView.getGlobalVisibleRect(rootGlobalRect, rootGlobalOffset);
+
+            int[] location = new int[2];
+            view.getLocationOnScreen(location);
+            rect.left = location[0];
+            if (rootGlobalOffset != null) {
+                rect.top -= rootGlobalOffset.y;
+                rect.bottom -= rootGlobalOffset.y;
+                rect.left -= rootGlobalOffset.x;
+                rect.right -= rootGlobalOffset.x;
+            }
+
+            decorView.addView(tooltip_view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            tooltip_view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
-                public void run() {
-                    final Rect rect = new Rect();
-                    view.getGlobalVisibleRect(rect);
+                public boolean onPreDraw() {
 
-                    final Rect rootGlobalRect = new Rect();
-                    final Point rootGlobalOffset = new Point();
-                    decorView.getGlobalVisibleRect(rootGlobalRect, rootGlobalOffset);
+                    tooltip_view.setup(rect, decorView.getWidth());
 
-                    int[] location = new int[2];
-                    view.getLocationOnScreen(location);
-                    rect.left = location[0];
-                    if (rootGlobalOffset != null) {
-                        rect.top -= rootGlobalOffset.y;
-                        rect.bottom -= rootGlobalOffset.y;
-                        rect.left -= rootGlobalOffset.x;
-                        rect.right -= rootGlobalOffset.x;
-                    }
+                    tooltip_view.getViewTreeObserver().removeOnPreDrawListener(this);
 
-                    decorView.addView(tooltip_view, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                    tooltip_view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                        @Override
-                        public boolean onPreDraw() {
-
-                            tooltip_view.setup(rect, decorView.getWidth());
-
-                            tooltip_view.getViewTreeObserver().removeOnPreDrawListener(this);
-
-                            return false;
-                        }
-                    });
+                    return false;
                 }
-            }, 100);
+            });
         }
         return tooltip_view;
     }

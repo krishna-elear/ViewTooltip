@@ -207,6 +207,10 @@ public class ViewTooltip {
         tooltip_view.close();
     }
 
+    public void closeNow() {
+        tooltip_view.removeNow();
+    }
+
     public ViewTooltip duration(long duration) {
         this.tooltip_view.setDuration(duration);
         return this;
